@@ -109,13 +109,11 @@ jobs:
           role-to-assume: arn:aws:iam::857378965163:role/github-actions
 
       - name: Replace Image Release
-        uses: richardrigutins/replace-in-files@v2
-        env:
-          IMG_RELEASE: ${{ needs.build.outputs.tagVersion }}       
+        uses: richardrigutins/replace-in-files@v2       
         with:
           files: 'k8s/app/video-deployment.yaml'
           search-text: 'IMAGE_VERSION'
-          replacement-text: "$IMG_RELEASE"
+          replacement-text: ${{ needs.build.outputs.tagVersion }}
 
       - name: Update kube config
         run: aws eks update-kubeconfig --name $EKS_CLUSTER_NAME --region $AWS_REGION
