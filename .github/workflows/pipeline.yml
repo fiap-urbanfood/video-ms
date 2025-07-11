@@ -108,8 +108,10 @@ jobs:
           audience: sts.amazonaws.com
           role-to-assume: arn:aws:iam::857378965163:role/github-actions
 
-      - name: Replace single file
+      - name: Replace Image Release
         uses: richardrigutins/replace-in-files@v2
+        env:
+          IMG_RELEASE: ${{ needs.build.outputs.tagVersion }}       
         with:
           files: 'k8s/app/video-deployment.yaml'
           search-text: 'IMAGE_VERSION'
@@ -118,10 +120,12 @@ jobs:
       - name: Update kube config
         run: aws eks update-kubeconfig --name $EKS_CLUSTER_NAME --region $AWS_REGION
 
-      - name: Deploy to APP EKS
+      - name: Deploy EKS
+        env:
+          IMG_RELEASE: ${{ needs.build.outputs.tagVersion }}      
         run: |
-          echo "Deploy Version: $IMAGE_RELEASE"
-          echo "Repository Autenticate: $ECR_REGISTRY"
+          echo "Deploy IMAGE: $ECR_REPOSITORY"
+          echo "Deploy Version: $IMG_RELEASE"
           kubectl apply -f k8s/namespace.yml
           kubectl apply -f k8s/app/video-service.yaml
           kubectl apply -f k8s/app/video-deployment.yaml
