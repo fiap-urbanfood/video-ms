@@ -24,7 +24,7 @@ spec:
     spec:
       containers:
         - name: app-process-video
-          image: 857378965163.dkr.ecr.us-east-1.amazonaws.com/spv/process-video:latest
+          image: 857378965163.dkr.ecr.us-east-1.amazonaws.com/spv/process-video:IMAGE_VERSION
           imagePullPolicy: Always
           env:
           - name: env
