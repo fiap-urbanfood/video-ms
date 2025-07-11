@@ -10,19 +10,19 @@ Sistema de Processamento de Vídeo, capta o video e extrai os frames dele e disp
 Etapas do Pipeline via github actions:
 
 1.1 Pull Request com sonar code quality e GitGuardian Security:
-![CI/CD - PULLREQUEST](devops/CICD/CICD-VIDEO-PULLREQUEST.png)
+![CI/CD - PULLREQUEST](devops/CICD/CICD-SPV_VIDEO-PULLREQUEST.png)
 
 1.2 Sonar para análise e monitoramento contínuo da qualidade do código.
-![CI/CD - SONAR](devops/CICD/CICD-VIDEO-SONAR.png)
+![CI/CD - SONAR](devops/CICD/CICD-SPV_VIDEO-SONAR.png)
 
 1.3 Build da Aplicação:
-![CI/CD - BUILD](devops/CICD/CICD-VIDEO-BUILD.png)
+![CI/CD - BUILD](devops/CICD/CICD-SPV_VIDEO-BUILD.png)
 
 1.4 Push da Imagem para o ECR.
-![CI/CD - ECR](devops/CICD/CICD-VIDEO-ECR.png)
+![CI/CD - ECR](devops/CICD/CICD-SPV_VIDEO-ECR.png)
 
 1.5 Deploy no EKS.
-![CI/CD - EKS](devops/CICD/CICD-VIDEO-EKS.png)
+![CI/CD - EKS](devops/CICD/CICD-SPV_VIDEO-EKS.png)
 
 # ###########################################################
 # 💻 Deploy via DockerFile
