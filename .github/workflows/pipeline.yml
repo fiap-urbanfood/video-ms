@@ -95,7 +95,7 @@ jobs:
 
       - env:
           IMAGE_RELEASE: ${{needs.build.outputs.version_image}}
-        run: echo "ECR_REPOSITORY: $ECR_REPOSITORY -- IMAGE_RELEASE: $IMAGE_RELEASE"
+        run: echo "ECR_REPOSITORY = $ECR_REPOSITORY -- IMAGE_RELEASE = $IMAGE_RELEASE"
 
       - name: Config AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
