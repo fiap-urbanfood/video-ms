@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-process-video
+  namespace: video-system
+  labels:
+    app: app-process-video
+spec:
+  ports:
+  - name: service-process-video-http
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: app-process-video
+  type: LoadBalancer
