@@ -19,7 +19,7 @@ permissions:
 
 jobs:
   maven-test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest    
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -38,9 +38,9 @@ jobs:
   build:
     name: Build APP
     runs-on: ubuntu-latest
-    outputs:
-      version_image: ${{ steps.increment_git_tag.outputs.stdout }}
     needs: maven-test
+    outputs:
+      tagVersion: ${{ steps.imageVersion.outputs.version }}    
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -62,23 +62,24 @@ jobs:
           role-to-assume: arn:aws:iam::857378965163:role/github-actions
 
       - name: Login to Amazon ECR
-        id: login_ecr
+        id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
         with:
           mask-password: 'false'
 
       - name: Automatic Tagging of Releases
-        id: increment_git_tag
+        id: increment-git-tag
         run: |
-          #bash ./devops/git_update.sh -v patch
-          # run in subshell, capturiing stdout to var
-          SCRIPT_OUTPUT=$(bash ./devops/git_update.sh -v patch)
+          bash ./devops/git_update.sh -v patch
+
+      - id: imageVersion
+        run: echo "version=${{ steps.increment-git-tag.outputs.git-tag }}" >> "$GITHUB_OUTPUT"
 
       - name: Build, tag, and push image to Amazon ECR
         id: build_image
         env:
-          IMAGE_RELEASE: ${{ steps.increment_git_tag.outputs.stdout }}
-          ECR_REGISTRY:  ${{ steps.login_ecr.outputs.registry }}
+          IMAGE_RELEASE: ${{ steps.increment-git-tag.outputs.git-tag }}
+          ECR_REGISTRY:  ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: latest
         run: |
           echo "Deploy Version: $IMAGE_RELEASE"
@@ -97,7 +98,7 @@ jobs:
         uses: actions/checkout@v4
 
       - env:
-          IMG_RELEASE: ${{ needs.build.outputs.version_image }}
+          IMG_RELEASE: ${{ needs.build.outputs.tagVersion }}
         run: echo "ECR_REPOSITORY = $ECR_REPOSITORY -- IMAGE_RELEASE = $IMG_RELEASE"
 
       - name: Config AWS Credentials
