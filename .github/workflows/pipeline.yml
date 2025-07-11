@@ -72,7 +72,7 @@ jobs:
         run: |
           #bash ./devops/git_update.sh -v patch
           # run in subshell, capturiing stdout to var
-          SCRIPT_OUTPUT=$(./devops/git_update.sh -v patch)
+          SCRIPT_OUTPUT=$(bash ./devops/git_update.sh -v patch)
 
       - name: Build, tag, and push image to Amazon ECR
         id: build_image
