@@ -1,5 +1,6 @@
 package com.fiap.video.service;
 
+import com.fiap.video.repository.StatusVideoRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,7 @@ public class VideoServiceTest {
         S3Client s3Client = mock(S3Client.class);
         SqsClient sqsClient = mock(SqsClient.class);
         SnsClient snsClient = mock(SnsClient.class);
+        StatusVideoRepository statusVideoRepository = mock(StatusVideoRepository.class);
 
 
 
@@ -40,7 +42,7 @@ public class VideoServiceTest {
                 new ResponseInputStream<>(GetObjectResponse.builder().build(), fileContent);
         when(s3Client.getObject(any(GetObjectRequest.class))).thenReturn(responseInputStream);
 
-        VideoService service = new VideoService(sqsClient, s3Client, snsClient);
+        VideoService service = new VideoService(sqsClient, s3Client, snsClient, statusVideoRepository);
         ResponseEntity<InputStreamResource> response = null;
         try{
             response = service.downloadFramesZip("teste");
