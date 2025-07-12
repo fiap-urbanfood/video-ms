@@ -3,6 +3,8 @@ package com.fiap.video.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fiap.video.controller.VideoController;
 import com.fiap.video.entity.FileStatusDTO;
+import com.fiap.video.entity.StatusVideo;
+import com.fiap.video.repository.StatusVideoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -42,15 +44,26 @@ public class VideoService {
     private final SnsClient snsClient;
     private final String snsTopicArn = "arn:aws:sns:us-east-1:857378965163:notification-fiap-email"; // Substitua pelo seu ARN
 
+    private final StatusVideoRepository statusVideoRepository;
     @Autowired
-    public VideoService(SqsClient sqsClient, S3Client s3Client, SnsClient snsClient) {
+    public VideoService(SqsClient sqsClient, S3Client s3Client, SnsClient snsClient, StatusVideoRepository statusVideoRepository) {
         this.sqsClient = sqsClient;
         this.s3Client = s3Client;
         this.snsClient = snsClient;
+        this.statusVideoRepository = statusVideoRepository;
     }
 
     public String uploadVideo(MultipartFile file){
+        StatusVideo statusVideo = new StatusVideo();
+        statusVideo.setNome(file.getOriginalFilename());
+        statusVideo.setStatus("Start");
+        statusVideo.setAcao("upload");
+        statusVideoRepository.save(statusVideo);
         if (file.isEmpty()) {
+            statusVideo.setNome(file.getOriginalFilename());
+            statusVideo.setStatus("Not found");
+            statusVideo.setAcao("upload");
+            statusVideoRepository.save(statusVideo);
             return "No file selected";
         }
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
@@ -83,8 +96,17 @@ public class VideoService {
                     .build();
             sqsClient.sendMessage(sendMsgRequest);
 
+            statusVideo.setNome(file.getOriginalFilename());
+            statusVideo.setStatus("Sucesso");
+            statusVideo.setAcao("upload");
+            statusVideoRepository.save(statusVideo);
+
             return "Video uploaded successfully: " + dest.getAbsolutePath();
         } catch (IOException e) {
+            statusVideo.setNome(file.getOriginalFilename());
+            statusVideo.setStatus("Error");
+            statusVideo.setAcao("upload");
+            statusVideoRepository.save(statusVideo);
 
             String errorMsg = "Erro ao processar vídeo upload: " + e.getMessage();
             PublishRequest request = PublishRequest.builder()
@@ -128,6 +150,11 @@ public class VideoService {
     }
 
     public ResponseEntity<InputStreamResource> downloadFramesZip(String filename) throws IOException {
+        StatusVideo statusVideo = new StatusVideo();
+        statusVideo.setNome(filename);
+        statusVideo.setStatus("Start");
+        statusVideo.setAcao("download");
+        statusVideoRepository.save(statusVideo);
 
         String framesPrefix = "file/"+filename+"/frame";
         try {
@@ -163,12 +190,24 @@ public class VideoService {
             }
 
             ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+
+            statusVideo.setNome(filename);
+            statusVideo.setStatus("Sucesso");
+            statusVideo.setAcao("download");
+            statusVideoRepository.save(statusVideo);
+
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"frames.zip\"")
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)
                     .body(new InputStreamResource(bais));
 
         } catch (Exception e) {
+
+            statusVideo.setNome(filename);
+            statusVideo.setStatus("Error");
+            statusVideo.setAcao("download");
+            statusVideoRepository.save(statusVideo);
+
             String errorMsg = "Erro ao processar vídeo download: " + e.getMessage();
             PublishRequest request = PublishRequest.builder()
                     .topicArn(snsTopicArn)
