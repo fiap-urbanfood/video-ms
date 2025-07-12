@@ -3,6 +3,11 @@
 Sistema de Processamento de Vídeo, capta o video e extrai os frames dele e disponibiliza o download para o usuario.
 
 # ###########################################################
+# 💻 Arquitetura do Serviço
+
+![ARQUITETURA](FIAP-URBAN-FOOD-FASE5.png)
+
+# ###########################################################
 # 💻 Deploy via Github Actions
 
 ### Executando o CI/CD
