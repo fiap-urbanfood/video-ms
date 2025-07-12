@@ -8,6 +8,11 @@ Sistema de Processamento de Vídeo, capta o video e extrai os frames dele e disp
 ![ARQUITETURA](FIAP-URBAN-FOOD-FASE5.png)
 
 # ###########################################################
+# 💻 VIDEO DE APRESENTAÇÃO DO PROJETO
+
+https://www.youtube.com/watch?v=jbnfhMVp4zo&t=6s
+
+# ###########################################################
 # 💻 Deploy via Github Actions
 
 ### Executando o CI/CD
