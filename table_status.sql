@@ -1,0 +1,8 @@
+CREATE TABLE `status_video` (
+  `id` INT(9) NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(50) NOT NULL,
+  `status` VARCHAR(50) NOT NULL,
+  `acao` VARCHAR(50) NOT NULL,
+  `grupo_mdm` VARCHAR(100),
+  PRIMARY KEY (`id`)
+) ENGINE=INNODB DEFAULT CHARSET=UTF8;
